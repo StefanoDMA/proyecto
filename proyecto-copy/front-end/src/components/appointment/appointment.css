@@ -1,5 +1,12 @@
-.outlined-basic {
-    border: 1px solid #010101;
-    padding: 10px;
-    border-radius: 4px;
+.appointment{
+    width: 410px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    margin-top: 50px;
 }
+ 
+
+  
