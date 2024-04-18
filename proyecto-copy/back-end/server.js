@@ -80,14 +80,16 @@ const appointmentSchema = {
     unique: false,
   },
 };
-User.hasMany(Appointment, { as: 'appoinments' });
-Appointment.belongsTo(User, { foreignKey: 'user_id' });
+
 
 
 
 // Create User entity using the schema
 const User = new Entity("User", userSchema);
 const Appointment = new Entity("Appointment", appointmentSchema);
+
+User.hasMany(Appointment, { as: 'appoinments' });
+Appointment.belongsTo(User, { foreignKey: 'user_id' });
 
 // Synchronize the database with the defined models.
 // This will create the tables if they do not exist
