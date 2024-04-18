@@ -39,7 +39,7 @@ function NavBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ bgcolor: 'dimgray' }}> {}
       <Container maxWidth="xl">
         <Toolbar disableGutters>
          <img style={{width:'45px', height:'auto', borderRadius:5}} src="/images/unaraspberrie.jpeg" />
