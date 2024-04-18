@@ -39,7 +39,7 @@ function NavBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ bgcolor: 'dimgray' }}> {}
       <Container maxWidth="xl">
         <Toolbar disableGutters>
          <img style={{width:'45px', height:'auto', borderRadius:5}} src="/images/unaraspberrie.jpeg" />
@@ -108,6 +108,11 @@ function NavBar() {
                  <Typography textAlign="center">Users</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
+                        navigate("/appointment");
+                 }}>
+                    <Typography textAlign="center">Appointments</Typography>
+                </MenuItem>  
+                <MenuItem  onClick={e=>{
                         navigate("/login");
                  }}>
                  <Typography textAlign="center">Login</Typography>
@@ -159,6 +164,11 @@ function NavBar() {
                         navigate("/users");
                  }}>
                  <Typography textAlign="center">Users</Typography>
+                </MenuItem>  
+                <MenuItem  onClick={e=>{
+                        navigate("/appointment");
+                 }}>
+                    <Typography textAlign="center">Appointments</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
                         navigate("/login");

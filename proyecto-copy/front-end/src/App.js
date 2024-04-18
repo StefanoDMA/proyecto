@@ -3,6 +3,7 @@ import './App.css';
 import Register from './components/register/register';
 import Login from './components/login/login';
 import Home from './components/home/home';
+import Appointment from './components/appointment/appointment';
 import NavBar from "./components/navbar/NavBar";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/login" element={<Login />} />
+          <Route exact path="/appointment" element={<Appointment />} />
           <Route exact path="/" element={<Home />} />
         </Routes>
       </Router>
