@@ -42,7 +42,6 @@ function NavBar() {
     <AppBar position="static" sx={{ bgcolor: 'dimgray' }}> {}
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-         <img style={{width:'45px', height:'auto', borderRadius:5}} src="/images/unaraspberrie.jpeg" />
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -105,11 +104,8 @@ function NavBar() {
                 <MenuItem  onClick={e=>{
                         navigate("/users");
                  }}>
-                 <Typography textAlign="center">Users</Typography>
-                </MenuItem>  
-                <MenuItem  onClick={e=>{
-                        navigate("/appointment");
-                 }}>
+                 
+                 
                     <Typography textAlign="center">Appointments</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
@@ -161,13 +157,9 @@ function NavBar() {
                  <Typography textAlign="center">Home</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
-                        navigate("/users");
-                 }}>
-                 <Typography textAlign="center">Users</Typography>
-                </MenuItem>  
-                <MenuItem  onClick={e=>{
                         navigate("/appointment");
                  }}>
+                 
                     <Typography textAlign="center">Appointments</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
@@ -185,7 +177,6 @@ function NavBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu

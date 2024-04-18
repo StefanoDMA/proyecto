@@ -3,15 +3,13 @@ const cors = require("cors");
 const app = express();
 const port = 3008;
 const { Sequelize, DataTypes } = require("sequelize");
+const bcrypt = require("bcrypt");
+const Joi = require("joi");
 
 app.use(cors());
-// Express middleware for parsing JSON
 app.use(express.json());
 
-//Conexion a la DB
-
 // Database connection
-
 const sequelize = new Sequelize({
   dialect: "mysql",
   host: "localhost",
@@ -19,7 +17,8 @@ const sequelize = new Sequelize({
   password: "",
   database: "prueba",
 });
-// Entity class for dynamic table creation
+
+// Entity classes
 class Entity {
   constructor(name, fields) {
     this.name = name;
@@ -30,9 +29,16 @@ class Entity {
     await this.model.sync({ force: true });
     console.log(`Table for ${this.name} synchronized`);
   }
+
+  hasMany(target, options) {
+    this.model.hasMany(target.model, options);
+  }
+
+  belongsTo(source, options) {
+    this.model.belongsTo(source.model, options);
+  }
 }
 
-// Define a simple schema for the User entity
 const userSchema = {
   user_id: {
     type: DataTypes.INTEGER,
@@ -50,13 +56,13 @@ const userSchema = {
     allowNull: false,
     unique: false,
   },
-
   user_password: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: false,
   },
 };
+
 const appointmentSchema = {
   appointment_id: {
     type: DataTypes.INTEGER,
@@ -81,58 +87,49 @@ const appointmentSchema = {
   },
 };
 
-
-
-
-// Create User entity using the schema
 const User = new Entity("User", userSchema);
 const Appointment = new Entity("Appointment", appointmentSchema);
 
-User.hasMany(Appointment, { as: 'appoinments' });
-Appointment.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Appointment, { as: "appointments" });
+Appointment.belongsTo(User, { foreignKey: "user_id" });
 
-// Synchronize the database with the defined models.
-// This will create the tables if they do not exist
-// It will also create the tables with the defined schema
-// it will delete the information in the table
-
-const syncronizeDB = () => {
-  sequelize
-    .sync()
-    .then(async () => {
-      await User.sync();
-      await Appointment.sync();
-    })
-    .catch((error) => {
-      console.error("Error synchronizing database:", error);
-    });
+// Synchronize the database with the defined models
+const syncronizeDB = async () => {
+  await sequelize.sync();
+  await User.sync();
+  await Appointment.sync();
 };
 
-//syncronizeDB();
+syncronizeDB();
 
-// Tengo dudas con como hacer que el log in funcione bien y si compare la info de la base de datos con la que uno introduce
+// Route handlers
+app.post("/register", async (req, res) => {
+  try {
+    const { user_email, user_name, user_last_name, user_password } = req.body;
+    const user = await User.model.create({
+      user_email,
+      user_name,
+      user_last_name,
+      user_password: await bcrypt.hash(user_password,10),
+    });
 
-
-
-app.post("/user", (req, res) => {
-  console.log("req.body");
-  console.log(req);
-  res.send(user);
+    res.status(201).json({ message: "User created", user });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.post("/login", async (req, res) => {
   try {
     const { user_email, user_password } = req.body;
-    console.log("req.body");
-    console.log(req.body);
     const user = await User.model.findOne({
       where: {
-        user_email: user_email,
-        user_password: user_password,
+        user_email,
       },
     });
 
-    if (user) {
+    if (user && (await bcrypt.compare(user_password, user.user_password))) {
       res.status(200).json({ message: "Login successful", user });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
@@ -143,29 +140,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/register", async (req, res) => {
-  try {
-    const { user_email, user_name, user_last_name, user_password } = req.body;
-    console.log("req.body");
-    console.log(req.body);
-    const user = await User.model.create({
-      user_email,
-      user_name,
-      user_last_name,
-      user_password,
-    });
-
-    res.status(201).json({ message: "User created", user });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 app.post("/appointment", async (req, res) => {
   try {
     const { appointment_date, appointment_time, appointment_reason, user_id } = req.body;
-    console.log("req.body");
-    console.log(req.body);
     const appointment = await Appointment.model.create({
       appointment_date,
       appointment_time,
@@ -180,84 +157,12 @@ app.post("/appointment", async (req, res) => {
   }
 });
 
-app.get("/appointments", async (req, res) => {
-  try {
-    const appointments = await Appointment.model.findAll();
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error("Error fetching appointments:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error handling middleware:", err);
+  res.status(500).json({ error: "Internal Server Error" });
 });
 
-app.delete("/appointment/:appointment_id", async (req, res) => {
-  try {
-    const { appointment_id } = req.params;
-    await Appointment.model.destroy({
-      where: {
-        appointment_id,
-      },
-    });
-
-    res.status(204).json({ message: "Appointment deleted" });
-  } catch (error) {
-    console.error("Error deleting appointment:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-})
-
-
-
-app.get("/users", async (req, res) => {
-  try {
-    const users = await User.model.findAll();
-    res.status(200).json(users);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-app.delete("/user/:user_id", async (req, res) => {
-  try {
-    const { user_id } = req.params;
-    await User.model.destroy({
-      where: {
-        user_id,
-      },
-    });
-
-    res.status(204).json({ message: "User deleted" });
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-app.put("/users/:user_id", async (req, res) => {
-  try {
-    const { user_id } = req.params;
-    const { user_email, user_name, user_last_name, user_password } = req.body;
-    await User.model.update(
-      {
-        user_email,
-        user_name,
-        user_last_name,
-        user_password,
-      },
-      {
-        where: {
-          user_id,
-        },
-      }
-    );
-
-    res.status(204).json({ message: "User updated" });
-  } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
