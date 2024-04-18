@@ -13,74 +13,75 @@ app.use(express.json());
 // Database connection
 
 const sequelize = new Sequelize({
-    dialect: "mysql",
-    host: "localhost",
-    username: "root",
-    password: "",
-    database: "prueba",
+  dialect: "mysql",
+  host: "localhost",
+  username: "root",
+  password: "",
+  database: "prueba",
 });
 // Entity class for dynamic table creation
 class Entity {
-    constructor(name, fields) {
-        this.name = name;
-        this.model = sequelize.define(name, fields);
-    }
+  constructor(name, fields) {
+    this.name = name;
+    this.model = sequelize.define(name, fields);
+  }
 
-    async sync() {
-        await this.model.sync({ force: true });
-        console.log(`Table for ${this.name} synchronized`);
-    }
+  async sync() {
+    await this.model.sync({ force: true });
+    console.log(`Table for ${this.name} synchronized`);
+  }
 }
 
 // Define a simple schema for the User entity
 const userSchema = {
-    user_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    user_email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    user_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,
-    },
+  user_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  user_email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  user_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: false,
+  },
 
-    user_password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,
-    },
+  user_password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: false,
+  },
 };
 const appointmentSchema = {
-    appointment_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    appointment_date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        unique: false,
-    },
-    appointment_time: {
-        type: DataTypes.TIME,
-        allowNull: false,
-        unique: false,
-    },
-    appointment_reason: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: false,
-    },
-  };
-
+  appointment_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  appointment_date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    unique: false,
+  },
+  appointment_time: {
+    type: DataTypes.TIME,
+    allowNull: false,
+    unique: false,
+  },
+  appointment_reason: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: false,
+  },
+};
+User.hasMany(Appointment, { as: 'appoinments' });
+Appointment.belongsTo(User, { foreignKey: 'user_id' });
 
 
 
@@ -94,22 +95,22 @@ const Appointment = new Entity("Appointment", appointmentSchema);
 // it will delete the information in the table
 
 const syncronizeDB = () => {
-    sequelize
-        .sync()
-        .then(async () => {
-            await User.sync();
-            await Appointment.sync();
-        })
-        .catch((error) => {
-            console.error("Error synchronizing database:", error);
-        });
+  sequelize
+    .sync()
+    .then(async () => {
+      await User.sync();
+      await Appointment.sync();
+    })
+    .catch((error) => {
+      console.error("Error synchronizing database:", error);
+    });
 };
 
- //syncronizeDB();
+//syncronizeDB();
 
- // Tengo dudas con como hacer que el log in funcione bien y si compare la info de la base de datos con la que uno introduce
+// Tengo dudas con como hacer que el log in funcione bien y si compare la info de la base de datos con la que uno introduce
 
- 
+
 
 app.post("/user", (req, res) => {
   console.log("req.body");
@@ -176,7 +177,7 @@ app.post("/appointment", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-  
+
 app.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.model.findAll();
