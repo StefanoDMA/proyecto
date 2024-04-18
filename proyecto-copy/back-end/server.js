@@ -57,13 +57,36 @@ const userSchema = {
         unique: false,
     },
 };
+const appointmentSchema = {
+    appointment_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+    },
+    appointment_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        unique: false,
+    },
+    appointment_time: {
+        type: DataTypes.TIME,
+        allowNull: false,
+        unique: false,
+    },
+    appointment_reason: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: false,
+    },
+  };
 
 
 
 
 // Create User entity using the schema
 const User = new Entity("User", userSchema);
-
+const Appointment = new Entity("Appointment", appointmentSchema);
 
 // Synchronize the database with the defined models.
 // This will create the tables if they do not exist
@@ -75,6 +98,7 @@ const syncronizeDB = () => {
         .sync()
         .then(async () => {
             await User.sync();
+            await Appointment.sync();
         })
         .catch((error) => {
             console.error("Error synchronizing database:", error);
@@ -134,6 +158,23 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.post("/appointment", async (req, res) => {
+    try {
+      const { appointment_date, appointment_time, appointment_reason } = req.body;
+      console.log("req.body");
+      console.log(req.body);
+      const appointment = await Appointment.model.create({
+        appointment_date,
+        appointment_time,
+        appointment_reason,
+      });
+  
+      res.status(201).json({ message: "Appointment created", appointment });
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  })
 
 app.get("/users", async (req, res) => {
   try {
