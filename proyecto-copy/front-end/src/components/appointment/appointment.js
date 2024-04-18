@@ -7,6 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import Button from '@mui/material/Button';
 
 
 
@@ -91,7 +92,10 @@ function ControllableStates1() {
             </center></div>
     );
 }
-
+function BasicButtons() {
+    return (
+        <Button margin-top= '50px' variant="contained">Agendar cita </Button>
+  ) }
 
     export default function Appointment() {
   return (
@@ -100,6 +104,7 @@ function ControllableStates1() {
         <ControllableStates />
         <CommonlyUsedComponents />
         <ControllableStates1 />
+        <BasicButtons />
     </div>
     );
 }
