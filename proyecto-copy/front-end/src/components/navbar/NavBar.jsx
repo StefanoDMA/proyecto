@@ -108,6 +108,11 @@ function NavBar() {
                  <Typography textAlign="center">Users</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
+                        navigate("/appointment");
+                 }}>
+                    <Typography textAlign="center">Appointments</Typography>
+                </MenuItem>  
+                <MenuItem  onClick={e=>{
                         navigate("/login");
                  }}>
                  <Typography textAlign="center">Login</Typography>
@@ -159,6 +164,11 @@ function NavBar() {
                         navigate("/users");
                  }}>
                  <Typography textAlign="center">Users</Typography>
+                </MenuItem>  
+                <MenuItem  onClick={e=>{
+                        navigate("/appointment");
+                 }}>
+                    <Typography textAlign="center">Appointments</Typography>
                 </MenuItem>  
                 <MenuItem  onClick={e=>{
                         navigate("/login");
