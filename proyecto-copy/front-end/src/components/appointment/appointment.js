@@ -70,7 +70,7 @@ function CommonlyUsedComponents() {
         const response = await axios.post("http://localhost:3008/appointment", {
           appointment_date: selectedDate,
           appointment_time: selectedTime,
-          user_id: JSON.parse(localStorage.getItem("appointment")).user_id,
+          user_id: JSON.parse(localStorage.getItem("user")).user_id,
         });
         console.log(response.data);
         // Reset input fields after successful registration
