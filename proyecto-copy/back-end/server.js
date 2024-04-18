@@ -159,22 +159,51 @@ app.post("/register", async (req, res) => {
   }
 });
 app.post("/appointment", async (req, res) => {
-    try {
-      const { appointment_date, appointment_time, appointment_reason } = req.body;
-      console.log("req.body");
-      console.log(req.body);
-      const appointment = await Appointment.model.create({
-        appointment_date,
-        appointment_time,
-        appointment_reason,
-      });
+  try {
+    const { appointment_date, appointment_time, appointment_reason, user_id } = req.body;
+    console.log("req.body");
+    console.log(req.body);
+    const appointment = await Appointment.model.create({
+      appointment_date,
+      appointment_time,
+      appointment_reason,
+      user_id,
+    });
+
+    res.status(201).json({ message: "Appointment created", appointment });
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
   
-      res.status(201).json({ message: "Appointment created", appointment });
-    } catch (error) {
-      console.error("Error creating appointment:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  })
+app.get("/appointments", async (req, res) => {
+  try {
+    const appointments = await Appointment.model.findAll();
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.delete("/appointment/:appointment_id", async (req, res) => {
+  try {
+    const { appointment_id } = req.params;
+    await Appointment.model.destroy({
+      where: {
+        appointment_id,
+      },
+    });
+
+    res.status(204).json({ message: "Appointment deleted" });
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
+
+
 
 app.get("/users", async (req, res) => {
   try {
