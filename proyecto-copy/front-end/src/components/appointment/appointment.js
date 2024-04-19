@@ -25,7 +25,6 @@ const serviceOptions = [
 const initialAppointmentData = {
   appointment_date: null,
   appointment_time: null,
-  appointment_reason: "",
   doctor: doctorOptions[0],
   service: serviceOptions[0]
 };
@@ -40,10 +39,16 @@ function AppointmentForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
+      // const user = localStorage.getItem("user");
+      const user = JSON.parse(localStorage.getItem("user"));
       const response = await axios.post("http://localhost:3008/appointment", {
-       ...appointmentData
+        appointment_date: appointmentData.appointment_date,
+        appointment_time: appointmentData.appointment_time,
+        doctor: appointmentData.doctor,
+        service: appointmentData.service,
+        user: user.user_id
       });
       console.log(response.data);
       localStorage.setItem("appointment", JSON.stringify(response.data.appointment));
@@ -76,26 +81,16 @@ function AppointmentForm() {
       <br />
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
-          label="Seleccione la fecha"
+          
           value={appointmentData.appointment_date}
           onChange={(newValue) => setAppointmentData(handleInputChange(appointmentData, { target: { name: "appointment_date", value: newValue } }))}
         />
+        <br></br>
         <TimePicker
-          label="Seleccione la hora"
           value={appointmentData.appointment_time}
           onChange={(newValue) => setAppointmentData(handleInputChange(appointmentData, { target: { name: "appointment_time", value: newValue } }))}
         />
       </LocalizationProvider>
-      <TextField
-       id="appointment-reason"
-        name="appointment_reason"
-        label="Motivo de la cita"
-        variant="outlined"
-        multiline
-        rows={4}
-        value={appointmentData.appointment_reason}
-        onChange={(e) => setAppointmentData(handleInputChange(appointmentData, e))}
-      />
       <Button variant="contained" type="submit">
         Agendar
       </Button>
